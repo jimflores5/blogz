@@ -1,0 +1,26 @@
+{% extends "blogbase.html" %}
+{% block content %}
+    <style>
+        textarea {
+            margin: 10px 0;
+            width: 540px;
+            height: 120px;
+        }
+    </style>
+
+    
+        <form method='POST'>
+            <label>Title:
+                        <input name="title" type="title" />
+                    </label><br/><br/>
+            <label>
+                <h3>Enter text here:</h3>
+                <textarea name="body" type="body" value=''></textarea>
+            </label><br/><br/>
+
+            <input type="submit" value="Submit" />
+        </form>
+
+        <hr />
+        
+{% endblock %}
