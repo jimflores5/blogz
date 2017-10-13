@@ -11,16 +11,20 @@
     
         <form method='POST'>
             <label>Title:
-                        <input name="title" type="title" />
-                    </label><br/><br/>
+                <input name="title" type="text" value = "{{title}}"/>
+                <span class="error">{{title_error}}</span>
+            </label><br/><br/>
+
             <label>
                 <h3>Enter text here:</h3>
-                <textarea name="body" type="body" value=''></textarea>
+                <textarea name="body" type="text" value="{{body}}"></textarea>
+                <span class="error">{{body_error}}</span>
             </label><br/><br/>
 
             <input type="submit" value="Submit" />
         </form>
 
         <hr />
-        
+        <a href="/blog">View Previoius Blogs</a>
+
 {% endblock %}

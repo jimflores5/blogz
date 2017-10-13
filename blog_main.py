@@ -30,11 +30,23 @@ def newpost():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        new_entry = Blog(title,body)
-        db.session.add(new_entry)
-        db.session.commit()
-        return redirect('/')
-    
+
+        title_error = ''
+        body_error = ''
+
+        if title == '':
+            title_error = 'Please enter a title.'
+        if body == '':
+            body_error = 'Please submit a blog entry.'
+        
+        if title_error == '' and body_error == '':
+            new_entry = Blog(title,body)
+            db.session.add(new_entry)
+            db.session.commit()
+            return redirect('/')
+        else:
+            return render_template('new_entry.html',title=title, body=body,title_error=title_error,body_error=body_error)
+
     return render_template('new_entry.html')
 
 @app.route('/blog', methods=['GET','POST'])
@@ -42,18 +54,13 @@ def blog_list():
     blogs=Blog.query.all()
     return render_template('blog.html',entries=blogs)
 
-#@app.route('/delete-task', methods=['POST'])
-#def delete_task():
+@app.route('/singlepost', methods=['GET','POST'])
+def single_entry():
+    if request.args:
+        blog_id = request.args.get('id')
+        blog = Blog.query.get(blog_id)
 
- #   task_id = int(request.form['task-id'])
-  #  task = Task.query.get(task_id)
-   # task.completed = True
-    #db.session.add(task)
-    #db.session.commit()
-
-    #return redirect('/')
-
-    #   titles=Blog.query.all()
+    return render_template('single_entry.html',entry=blog)
 
 if __name__ == '__main__':
     app.run()

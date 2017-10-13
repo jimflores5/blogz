@@ -4,10 +4,14 @@
         <p>No entries yet.</p>
     {% else %}
         <ul>
+        <form>
             {%for entry in entries %}
-                <li>{{entry.title}}<br/>{{entry.body}}</li>
+                <li><a href="/singlepost?id={{entry.id}}">{{entry.title}}</a><br/>{{entry.body}}</li>
                 <hr />
             {%endfor%}
+        </form>
         </ul>
+        <br/>
+        <a href="/newpost">New Blog Post</a>
     {% endif %}
 {% endblock %}
