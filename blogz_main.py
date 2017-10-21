@@ -43,7 +43,7 @@ def require_login():
 def index():
     owner = User.query.filter_by(username = session['username']).first()  
 
-    return render_template('index.html')
+    return render_template('index.html', username = session['username'], active = True)
 
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
@@ -53,30 +53,27 @@ def newpost():
         title = request.form['title']
         body = request.form['body']
 
-        title_error = ''
-        body_error = ''
-
         if title == '':
-            title_error = 'Please enter a title.'
+            flash('Please enter a title.', 'error')
+            return render_template('new_entry.html',title=title, body=body, active = True)
         if body == '':
-            body_error = 'Please submit a blog entry.'
+            flash('Please submit a blog entry.', 'error')
+            return render_template('new_entry.html',title=title, body=body, active = True)
         
-        if title_error == '' and body_error == '':
-            new_entry = Blog(title, body, owner)
-            db.session.add(new_entry)
-            db.session.commit()
+        new_entry = Blog(title, body, owner)
+        db.session.add(new_entry)
+        db.session.commit()
 
-            return redirect("/singlepost?id="+str(new_entry.id))
+        return redirect("/singlepost?id="+str(new_entry.id))
 
-        else:
-            return render_template('new_entry.html',title=title, body=body,title_error=title_error,body_error=body_error)
+    return render_template('new_entry.html', username = session['username'], active = True)
 
-    return render_template('new_entry.html')
+@app.route('/singleUser', methods=['GET','POST'])
+def single_user():
+    owner = User.query.filter_by(username = session['username']).first() 
+    blogs = Blog.query.filter_by(owner = owner).all()    #Get only rows (objects) from the db Blog table that belong to this user.
 
-@app.route('/blog', methods=['GET','POST'])
-def blog_list():
-    blogs=Blog.query.all()
-    return render_template('blog.html',entries=blogs)
+    return render_template('singleUser.html',entries=blogs, username = session['username'], active = True)
 
 @app.route('/singlepost', methods=['GET','POST'])
 def single_entry():
@@ -84,7 +81,7 @@ def single_entry():
         blog_id = request.args.get('id')
         blog = Blog.query.get(blog_id)
 
-    return render_template('single_entry.html',entry=blog)
+    return render_template('single_entry.html',entry=blog, username = session['username'], active = True)
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
@@ -94,7 +91,6 @@ def login():
         user = User.query.filter_by(username = username).first() #Pulls the user data from the db.  The FIRST entry with the matching email is pulled.
         if user and user.password == password:  #Checks if the user is in the db and typed in the correct password.
             session['username'] = username   #The 'session" function will allow the site to 'remember' that a user is logged in.
-            flash('Logged in')         #Flash messages are generally used in the base template.
             return redirect('/')
         elif not user:
             flash('Incorrect username.', 'error') 
@@ -112,7 +108,31 @@ def register():
         password = request.form['password']
         verify = request.form['verify']
 
-        #verification code here
+        if username == '':
+            flash('Please enter a user name.', 'error')
+            return render_template("signup.html")
+        elif len(username)<3 or len(username)>20:
+            flash('User name must be 3 - 20 characters long.', 'error')
+            return render_template("signup.html", username = username)
+        elif " " in username:
+            flash('Username cannot contain spaces.', 'error')
+            return render_template("signup.html", username = username)
+
+        if password == '':
+            flash('Please enter a password.', 'error')
+            return render_template("signup.html", username=username)
+        elif len(password)<3 or len(password)>10:
+            flash('Password must be 3 - 10 characters long.', 'error')
+            return render_template("signup.html", username = username, password='')
+        elif " " in password:
+            flash('Password cannot contain spaces.', 'error')
+            return render_template("signup.html", username = username, password='')
+        elif verify =='':
+            flash('Please verify your password.', 'error')
+            return render_template("signup.html", username = username, password=password)
+        elif verify != password:
+            flash('Passwords do not match.', 'error')
+            return render_template("signup.html", username = username, password=password)
 
         existing_user = User.query.filter_by(username = username).first() #Pulls the user data from the db.  The FIRST entry with the matching email is pulled.
         if not existing_user:
@@ -124,13 +144,21 @@ def register():
             return redirect('/')
         else:
             flash(existing_user.username + ' already registered.', 'error')
+            return render_template("signup.html", username = '')
 
     return render_template("signup.html")
 
-@app.route('/logout')
+@app.route('/logout', methods = ['POST', 'GET'])
 def logout():
     del session['username']    #Forgets the user.
-    return redirect('/')
+    return redirect('/blog')
+
+@app.route('/blog', methods=['GET','POST'])
+def blog_list():
+    users = User.query.all()
+    blogs = Blog.query.all()
+
+    return render_template('blog.html',users=users, active = False)
 
 
 if __name__ == '__main__':

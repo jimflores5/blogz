@@ -1,7 +1,7 @@
 {% extends "blogbase.html" %}
 
 {% block content %}
-<h1>Register to Get It Done!</h1>
+<h1>Register for Build a Blog</h1>
 <form action="/register" method="post">
     <table>
         <tr>
@@ -13,7 +13,7 @@
         <tr>
             <td><label for="password">Password</label></td>
             <td>
-                <input name="password" type="password">
+                <input name="password" type="password" value = "{{password}}">
             </td>
         </tr>
         <tr>

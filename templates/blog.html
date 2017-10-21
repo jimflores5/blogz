@@ -1,12 +1,12 @@
 {% extends "blogbase.html" %}
 {% block content %}
-    {% if entries|length == 0 %}
-        <p>No entries yet.</p>
+    {% if users|length == 0 %}
+        <p>No users yet.</p>
     {% else %}
         <ul>
         <form>
-            {%for entry in entries %}
-                <li><a href="/singlepost?id={{entry.id}}">{{entry.title}}</a><br/>{{entry.body}}</li>
+            {%for user in users %}
+                <li><a href="/singleUser?id={{user.username}}">{{entry.title}}</a><br/>{{entry.body}}</li>
                 <hr />
             {%endfor%}
         </form>
