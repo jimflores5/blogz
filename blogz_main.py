@@ -34,10 +34,10 @@ class Blog(db.Model):
 
 @app.before_request         #Run this function before calling any request handlers.
 def require_login():
-    allowed_routes = ['login', 'register']
+    allowed_routes = ['login', 'register', 'blog']
 
     if request.endpoint not in allowed_routes and 'username' not in session:      #Checks to see if the user is logged in.
-        return redirect('/login')
+        return redirect('/blog')
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -70,10 +70,21 @@ def newpost():
 
 @app.route('/singleUser', methods=['GET','POST'])
 def single_user():
+    if 'username' in session:
+        active = True
+    else:
+        active = False
+
+    if request.args:
+        owner = request.args.get('id')
+        user = User.query.filter_by(id = owner).first()
+        blogs = Blog.query.filter_by(owner_id = owner).all()
+        return render_template('singleUser.html',entries=blogs, user = user, username = session['username'], active = active)
+
     owner = User.query.filter_by(username = session['username']).first() 
     blogs = Blog.query.filter_by(owner = owner).all()    #Get only rows (objects) from the db Blog table that belong to this user.
 
-    return render_template('singleUser.html',entries=blogs, username = session['username'], active = True)
+    return render_template('singleUser.html',entries=blogs, username = session['username'], active = active)
 
 @app.route('/singlepost', methods=['GET','POST'])
 def single_entry():
@@ -91,7 +102,7 @@ def login():
         user = User.query.filter_by(username = username).first() #Pulls the user data from the db.  The FIRST entry with the matching email is pulled.
         if user and user.password == password:  #Checks if the user is in the db and typed in the correct password.
             session['username'] = username   #The 'session" function will allow the site to 'remember' that a user is logged in.
-            return redirect('/')
+            return redirect('/newpost')
         elif not user:
             flash('Incorrect username.', 'error') 
             return render_template("login.html", username = '')
@@ -141,7 +152,7 @@ def register():
             db.session.commit()
             session['username'] = username
 
-            return redirect('/')
+            return redirect('/newpost')
         else:
             flash(existing_user.username + ' already registered.', 'error')
             return render_template("signup.html", username = '')
@@ -154,11 +165,15 @@ def logout():
     return redirect('/blog')
 
 @app.route('/blog', methods=['GET','POST'])
-def blog_list():
-    users = User.query.all()
-    blogs = Blog.query.all()
-
-    return render_template('blog.html',users=users, active = False)
+def blog():
+    if 'username' not in session:
+        users = User.query.order_by('username').all()
+        blogs = Blog.query.all()
+        return render_template('blog.html',users=users, blogs = blogs, active = False)
+    else: 
+        users = User.query.order_by('username').all()
+        blogs = Blog.query.all()
+        return render_template('blog.html',users=users, blogs = blogs, username = session['username'], active = True)
 
 
 if __name__ == '__main__':

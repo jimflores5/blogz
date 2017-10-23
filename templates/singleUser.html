@@ -3,6 +3,9 @@
     {% if entries|length == 0 %}
         <p>No entries yet.</p>
     {% else %}
+        {% if user %}
+            <h3>{{user.username}}'s Blogz entries:</h3>
+        {% endif %}
         <ul>
         <form>
             {%for entry in entries %}
@@ -13,5 +16,7 @@
         </ul>
         <br/>
         <a href="/newpost">New Blog Post</a>
+        <br/><br/>
+        <a href="/blog">View Blogz Members</a>
     {% endif %}
 {% endblock %}

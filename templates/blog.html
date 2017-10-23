@@ -3,15 +3,28 @@
     {% if users|length == 0 %}
         <p>No users yet.</p>
     {% else %}
-        <ul>
+        <ol>
         <form>
             {%for user in users %}
-                <li><a href="/singleUser?id={{user.username}}">{{entry.title}}</a><br/>{{entry.body}}</li>
+                <li><a href="/singleUser?id={{user.id}}">{{user.username}}</a></li>
+                <ul>
+                    {% for blog in blogs %}
+                    {% if blog.owner_id == user.id %}
+                        <li>{{blog.title}}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
                 <hr />
             {%endfor%}
         </form>
-        </ul>
+        </ol>
         <br/>
-        <a href="/newpost">New Blog Post</a>
+        {% if active %}
+            <a href="/newpost">New Blog Post</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <br/><br/>
+            <a href="/register">Register</a>
+        {% endif %}
     {% endif %}
 {% endblock %}

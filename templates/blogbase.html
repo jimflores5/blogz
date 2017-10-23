@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>
-            Build-A-Blog
+            Blogz
         </title>
         <style type="text/css">
             .error {
@@ -13,9 +13,9 @@
     <body>
         <h1>
             {% if username %}
-                <a href="/">{{username}}'s Build-A-Blog</a>
+                <a href="/singleUser">{{username}}'s Blogz Page</a>
             {% else %}
-            <a href="/">Build-A-Blog</a>
+                <a href="/">Blogz Members</a>
             {% endif %}
         </h1>
 
@@ -26,6 +26,8 @@
             <div>
                 <a href='/logout'>Logout</a>
             </div>
+            <!-- TODO: Add a link to homepage. -->
+            
         {% endif %}
 
         {% with messages = get_flashed_messages(with_categories=True) %}  <!-- pulls a list of all flash messages qued up from the code -->
