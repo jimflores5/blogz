@@ -19,7 +19,7 @@
                 {%endfor%}
             {% else %}
                 {%for user in users %}
-                    <li><a href="/">{{user.username}}</a></li>
+                    <li><a href="/login">{{user.username}}</a></li>
                     <ul>
                         {% for blog in blogs %}
                             {% if blog.owner_id == user.id %}
@@ -27,6 +27,7 @@
                             {% endif %}
                         {% endfor %}
                     </ul>
+                    <p class = 'please-login'>Please login to view individual entries.</p>
                     <hr />
                 {%endfor%}
             {% endif %}
@@ -35,6 +36,8 @@
         <br/>
         {% if active %}
             <a href="/newpost">New Blog Post</a>
+            <br/><br/>
+            <a href="/">View Blogz Members</a>
         {% else %}
             <a href="/login">Login</a>
             <br/><br/>

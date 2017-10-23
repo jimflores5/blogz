@@ -42,13 +42,13 @@ def require_login():
 @app.route('/', methods=['GET','POST'])
 def index():
     if 'username' in session:
-        active = True
+        users = User.query.all() 
+        return render_template('index.html', users = users, username = session['username'], active = True)
     else:
-        active = False
+        users = User.query.all() 
+        return render_template('index.html', users = users, active = False)
 
-    users = User.query.all() 
-
-    return render_template('index.html', users = users, active = active)
+    return render_template('index.html', users = users, username = session['username'], active = True)
 
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
@@ -75,29 +75,29 @@ def newpost():
 
 @app.route('/singleUser', methods=['GET','POST'])
 def single_user():
-    if 'username' in session:
-        active = True
-    else:
-        active = False
 
     if request.args:
         owner = request.args.get('id')
         user = User.query.filter_by(id = owner).first()
         blogs = Blog.query.filter_by(owner_id = owner).all()
-        return render_template('singleUser.html',entries=blogs, user = user, username = session['username'], active = active)
+        if 'username' in session:
+            return render_template('singleUser.html',entries=blogs, user = user, username = session['username'], active = True)
+        else:
+            return render_template('singleUser.html',entries=blogs, user = user, active = False)
 
     owner = User.query.filter_by(username = session['username']).first() 
     blogs = Blog.query.filter_by(owner = owner).all()    #Get only rows (objects) from the db Blog table that belong to this user.
 
-    return render_template('singleUser.html',entries=blogs, username = session['username'], active = active)
+    return render_template('singleUser.html',entries=blogs, username = session['username'], active = True)
 
 @app.route('/singlepost', methods=['GET','POST'])
 def single_entry():
     if request.args:
         blog_id = request.args.get('id')
         blog = Blog.query.get(blog_id)
+        author = User.query.filter_by(id = blog.owner_id).first()
 
-    return render_template('single_entry.html',entry=blog, username = session['username'], active = True)
+    return render_template('single_entry.html',entry=blog, author = author, username = session['username'], active = True)
 
 @app.route('/login', methods = ['POST', 'GET'])
 def login():
@@ -179,7 +179,6 @@ def blog():
         users = User.query.order_by('username').all()
         blogs = Blog.query.all()
         return render_template('blog.html',users=users, blogs = blogs, username = session['username'], active = True)
-
 
 if __name__ == '__main__':
     app.run()

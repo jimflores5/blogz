@@ -3,13 +3,18 @@
     
     <h3>{{entry.title}}</h3>
     <h4>{{entry.body}}</h4>
+    <p class = "post-author">written by
+        <a href="/singleUser?id={{author.id}}">{{author.username}}</a>
+    </p>
             
     <hr />
     <br/>
         <a href="/newpost">New Blog Post</a>
         <br/><br/>
-        <a href="/singleUser">View All My Posts</a>
+        <a href="/singleUser">View My Blogz</a>
         <br/><br/>
         <a href="/blog">View Blogz Members</a>
+        <br/><br/>
+        <a href="/">View All Blogz</a>
 
 {% endblock %}

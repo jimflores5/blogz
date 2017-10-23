@@ -3,6 +3,9 @@
     {% if users|length == 0 %}
         <p>No users yet.</p>
     {% else %}
+        {% if active %}
+            <h3>Blogz Member List:</h3>
+        {% endif %}
         <ol>
         <form>
             {% if active %}
@@ -21,7 +24,13 @@
         <br/>
         {% if active %}
             <a href="/newpost">New Blog Post</a>
+            <br/><br/>
+            <a href="/singleUser">View My Blogz</a>
+            <br/><br/>
+            <a href="/blog">View All Blogz</a>
         {% else %}
+            <a href="/blog">View All Blogz</a>
+            <br/><br/>
             <a href="/login">Login</a>
             <br/><br/>
             <a href="/register">Register</a>
