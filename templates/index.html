@@ -1,10 +1,30 @@
 {% extends "blogbase.html" %}
 {% block content %}
-    <h2>Choose your task:</h2>
-    <form method='POST'>
-        <a href="/newpost">New Blog Post</a>
-        <br/><br/>
-        <a href="/singleUser">View Previoius Blogs</a>
-    </form>
-
+    {% if users|length == 0 %}
+        <p>No users yet.</p>
+    {% else %}
+        <ol>
+        <form>
+            {% if active %}
+                {%for user in users %}
+                    <li><a href="/singleUser?id={{user.id}}">{{user.username}}</a></li>
+                    <hr />
+                {%endfor%}
+            {% else %}
+                {%for user in users %}
+                    <li><a href="/blog">{{user.username}}</a></li>
+                    <hr />
+                {%endfor%}
+            {% endif %}
+        </form>
+        </ol>
+        <br/>
+        {% if active %}
+            <a href="/newpost">New Blog Post</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <br/><br/>
+            <a href="/register">Register</a>
+        {% endif %}
+    {% endif %}
 {% endblock %}

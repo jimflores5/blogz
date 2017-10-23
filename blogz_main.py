@@ -34,16 +34,21 @@ class Blog(db.Model):
 
 @app.before_request         #Run this function before calling any request handlers.
 def require_login():
-    allowed_routes = ['login', 'register', 'blog']
+    allowed_routes = ['login', 'register', 'blog', 'index']
 
     if request.endpoint not in allowed_routes and 'username' not in session:      #Checks to see if the user is logged in.
-        return redirect('/blog')
+        return redirect('/')
 
 @app.route('/', methods=['GET','POST'])
 def index():
-    owner = User.query.filter_by(username = session['username']).first()  
+    if 'username' in session:
+        active = True
+    else:
+        active = False
 
-    return render_template('index.html', username = session['username'], active = True)
+    users = User.query.all() 
+
+    return render_template('index.html', users = users, active = active)
 
 @app.route('/newpost', methods=['GET','POST'])
 def newpost():
