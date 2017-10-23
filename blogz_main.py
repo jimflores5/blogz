@@ -167,7 +167,7 @@ def register():
 @app.route('/logout', methods = ['POST', 'GET'])
 def logout():
     del session['username']    #Forgets the user.
-    return redirect('/blog')
+    return redirect('/')
 
 @app.route('/blog', methods=['GET','POST'])
 def blog():
